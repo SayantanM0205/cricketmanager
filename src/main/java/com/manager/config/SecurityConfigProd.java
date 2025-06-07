@@ -13,8 +13,8 @@ import static org.springframework.security.config.Customizer.withDefaults;
 
 
 @Configuration
-@Profile("!prod")
-public class SecurityConfig {
+@Profile("prod")
+public class SecurityConfigProd {
 	
 	@Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {

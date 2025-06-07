@@ -14,9 +14,9 @@ import org.springframework.stereotype.Component;
 import lombok.RequiredArgsConstructor;
 
 @Component
-@Profile("!prod")
+@Profile("prod")
 @RequiredArgsConstructor
-public class CricketManagerAuthenticationProvider implements AuthenticationProvider{
+public class CricketManagerProdAuthenticationProvider implements AuthenticationProvider{
 	
 	private final UserDetailsService userDetailsService;
 	private final PasswordEncoder passwordEncoder;
@@ -26,7 +26,12 @@ public class CricketManagerAuthenticationProvider implements AuthenticationProvi
 		String username = authentication.getName();
 		String password = authentication.getCredentials().toString();
 		UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-		return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+		if(passwordEncoder.matches(password, userDetails.getPassword())) {
+			//Fetch Age details and validate if age > 18
+			return new UsernamePasswordAuthenticationToken(username, password, userDetails.getAuthorities());
+		}else {
+			throw new BadCredentialsException("Invalid Password");
+		}
 	}
 
 	@Override
