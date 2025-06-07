@@ -14,19 +14,19 @@ import com.manager.entity.Member;
 import com.manager.service.MemberService;
 
 @RestController
-@RequestMapping("/api/v1")
+//@RequestMapping("/api/v1")
 public class MemberController {
 	
 	@Autowired
 	private MemberService memberService;
 	
 	
-	@GetMapping("/member/{memberId}")
-	public ResponseEntity<Member> getMember(@PathVariable String memberId){
-		return ResponseEntity.status(HttpStatus.OK).body(this.memberService.getMember(memberId));
-	}
+//	@GetMapping("/member/{memberId}")
+//	public ResponseEntity<Member> getMember(@PathVariable String memberId){
+//		return ResponseEntity.status(HttpStatus.OK).body(this.memberService.getMember(memberId));
+//	}
 	
-	@PostMapping("/member")
+	@PostMapping("/register")
 	public ResponseEntity<String> createMember(@RequestBody Member member){
 		if(member != null) {
 			return ResponseEntity.status(HttpStatus.CREATED).body(this.memberService.createMember(member));

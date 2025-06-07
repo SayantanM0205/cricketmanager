@@ -2,6 +2,7 @@ package com.manager.service.impl;
 
 import java.util.UUID;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.manager.entity.Member;
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MemberServiceImpl implements MemberService{
 	
 	private MemberRepository memberRepository;
+	private PasswordEncoder passwordEncoder;
 
 	@Override
 	public Member getMember(String memberId) {
@@ -29,7 +31,9 @@ public class MemberServiceImpl implements MemberService{
 	@Override
 	public String createMember(Member member) {
 		String memberId = UUID.randomUUID().toString();
+		String encodedPassword = passwordEncoder.encode(member.getMemberPassword());
 		member.setMemberId(memberId);
+		member.setMemberPassword(encodedPassword);
 		Member memberCreated = memberRepository.save(member);
 		log.info("Member created with id: {}", memberCreated);
 		return member.getMemberId();
