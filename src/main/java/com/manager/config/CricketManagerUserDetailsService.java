@@ -21,7 +21,7 @@ public class CricketManagerUserDetailsService implements UserDetailsService {
     private final MemberRepository memberRepository;
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Member member = memberRepository.findByMemberEmail(username).orElseThrow(() -> new RuntimeException("User not found with email: " + username));
+        Member member = memberRepository.findByMemberEmail(username).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + username));
         List<GrantedAuthority> grantedAuthorities = List.of(new SimpleGrantedAuthority(member.getRole()));
         return new User(member.getMemberEmail(), member.getMemberPassword(), grantedAuthorities);
     }

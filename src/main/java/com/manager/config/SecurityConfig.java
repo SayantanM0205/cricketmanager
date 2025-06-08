@@ -9,6 +9,10 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.password.HaveIBeenPwnedRestApiPasswordChecker;
+
+import com.manager.exceptionhandling.CustomAccessDeniedHandlerImpl;
+import com.manager.exceptionhandling.CustomBasicAuthenticationEntryPoint;
+
 import static org.springframework.security.config.Customizer.withDefaults;
 
 
@@ -18,16 +22,20 @@ public class SecurityConfig {
 	
 	@Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrfConfig -> csrfConfig.disable())
-                .authorizeHttpRequests((requests) -> requests
-                .requestMatchers("/mystats")
-                .authenticated()
-                .requestMatchers("/offers","/register")
-                .permitAll());
-//        http.formLogin(flc->flc.disable());
-        http.formLogin(withDefaults());
-        http.httpBasic(withDefaults());
-        return http.build();
+		http.sessionManagement(smc->smc.invalidSessionUrl("/invalidsession"))
+		.requiresChannel(rcc->rcc.anyRequest().requiresInsecure())
+		.csrf(csrfConfig -> csrfConfig.disable())
+		.authorizeHttpRequests((requests) -> requests
+		.requestMatchers("/mystats")
+		.authenticated()
+		.requestMatchers("/offers","/register","/error","/invalidsession")
+		.permitAll());
+	//   http.formLogin(flc->flc.disable());
+	http.formLogin(withDefaults());
+	http.httpBasic(hbc->hbc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+	http.exceptionHandling(ehc->ehc.accessDeniedHandler(new CustomAccessDeniedHandlerImpl()));
+//	http.exceptionHandling(ehc->ehc.authenticationEntryPoint(new CustomBasicAuthenticationEntryPoint()));
+	return http.build();
     }
 
 //    @Bean
